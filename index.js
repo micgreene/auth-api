@@ -15,8 +15,6 @@ const mongooseOptions = {
   useCreateIndex: true 
 };
 
-//mongoose.Schema({});
-
 mongoose.connect(MONGODB_URI, mongooseOptions)
   .then(() => {
     server.start(PORT);

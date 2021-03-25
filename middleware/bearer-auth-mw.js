@@ -19,15 +19,15 @@ module.exports = async (req,res, next) => {
   // })
 
   try{
-     if(!req.heaers.authorization) throw new Error('missing token in headers!');
+     if(!req.headers.authorization) throw new Error('missing token in headers!');
 
      const token = req.headers.authorization.split(' ').pop();
      const validUser = await users.authenticateToken(token);
 
-     req.user = vaidUser;
+     req.user = validUser;
      req.token = validUser.token;
      next();
   } catch (e) {
-    next('e.message');
+    next(e.message);
   }
 }

@@ -3,22 +3,22 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 //setup an "App Secret" to sign our token
-const SECRET = process.env.APP_SECRET || 'cool';//defined by app not user
+const SECRET = process.env.APP_SECRET;//defined by app not user
 
 const users = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  roles: {type: String, required: true, default: 'user', enum: ['user', 'editor', 'admin']}
+  role: {type: String, required: true, default: 'user', enum: ['user', 'editor', 'admin']}
 }, { toJSON: { virtuals: true}});
 
-const appSecret = process.env.APP_SECRET || 
 users.virtual('token').get(function(){
   let token = {
     username: this.username
   }
-  return jwt.sign(token, SECRET);//this will create a "token" for us, which oncludes our username and PW
+  return jwt.sign(token, SECRET);//this will create a "token" for us, which includes our username and PW
 })
 
 users.virtual('capabilities').get(function(){
@@ -27,6 +27,7 @@ users.virtual('capabilities').get(function(){
     editor: ['read', 'create', 'update'],
     admin: ['read', 'create', 'update', 'delete']
   }
+  console.log('capabilities: ', act[this.role]);
   return act[this.role];
 })
 
@@ -55,7 +56,7 @@ users.statics.authenticateToken = async function(token){
     if(user) { return user; }
     throw new Error ('user not found');
   } catch(e){
-      throw new Error('e.message')
+      throw new Error(e.message)
   }
 }
 

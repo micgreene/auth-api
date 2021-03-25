@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-//const { builtinModules } = require('node:module');
 
 const User = require('../models/user.js');
 const basicAuth = require('../middleware/basic-auth-mw.js');
@@ -11,9 +10,7 @@ const acl = require('../middleware/acl-middleware.js');
 const auth = express.Router();
 
 auth.post('/signup', async (req,res) => {  
-  console.log(req.body);
   let user = new User(req.body);
-  console.log(user);
   const record = await user.save();
   res.status(201).json(record);//only returning record for learning purposes
 });
